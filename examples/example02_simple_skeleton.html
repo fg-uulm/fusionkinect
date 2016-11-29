@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+   <head>
+   		<title>FusionKinect - Simple Skeleton Drawing Example</title>
+		<style>
+
+		  body {
+		  	background-color: black;
+		  }
+
+	      .joint { 
+			background-color: red;
+			width:10px;
+			height:10px;
+			border-radius: 3px;
+		  }
+
+		  .joint div {
+		  	font-size: 10px;
+			color:white;
+			font-family: Courier, Arial, "Helvetica Neue", sans-serif;
+			font-weight: 100;
+		  	margin-left:15px;
+		  	width:100px;
+		  }
+
+		</style>
+   </head>
+   <body>      
+   	  <script src="http://code.jquery.com/jquery-2.2.3.min.js" ></script>  
+   	  <script src="Kinect.js" ></script>
+      <script type="text/javascript">			
+		
+			//Init view, start animation
+			init();
+			animate();
+
+			function init() {			
+				//Init Kinect connection, start depth
+				FusionKinect.connect("192.168.1.28");
+				FusionKinect.setSkeletonsEnabled(true);
+
+				//Event handling
+				window.addEventListener( 'resize', onWindowResize, false );
+				onWindowResize(); //initial window size
+
+				//Custom init code here...
+			}
+
+			function onWindowResize() {
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+				//Window size change
+			}			
+
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+
+			function render() {
+				var data = FusionKinect.getSkeletonData();
+
+				//Clear out skeletons
+				$("#skeletons").empty();
+
+				//Render each skeleton
+				$.each(data.Skeletons, function(key,value){
+					//skeleton joints
+					$.each(value.absoluteRawSkeleton, function(key2,value2) {
+						var topPos = (value2.position.Y*-1*(windowHalfY/2*value2.position.Z)+windowHalfY);
+						var leftPos = value2.position.X*(windowHalfY/2*value2.position.Z)+windowHalfX;
+						var divToAdd = $('<div></div>').addClass("joint").css({top: topPos, left: leftPos, position:'absolute'});
+						$(divToAdd).append("<div>"+key2
+							+"<br/>X: "+value2.position.X.toFixed(2)
+							+"<br/>Y: "+value2.position.Y.toFixed(2)
+							+"<br/>Z: "+value2.position.Z.toFixed(2)+"<br/></div>");
+						$("#skeletons").append(divToAdd);
+					});
+				});
+			}
+
+      </script>	  
+      <div id="skeletons">
+         
+      </div>  
+   </body>
+</html>

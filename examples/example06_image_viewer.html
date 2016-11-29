@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+   <head>
+   		<title>FusionKinect - Image Viewer Example</title> 	  
+		<style>
+			body {
+				background-color: black;
+				color:#eeeeee;
+				font-family: Courier, Arial, "Helvetica Neue", sans-serif;
+			}
+
+			img {
+				border:3px solid #aaaaaa;				
+				margin-top:0px;
+			}
+			div {
+				margin:20px;
+				display: inline-block;
+			}
+		</style>
+   </head>
+   <body>      
+   	  <script src="http://code.jquery.com/jquery-2.2.3.min.js" ></script>
+   	  <script src="Kinect.js" ></script>
+      <script type="text/javascript">
+			//Init view, start animation
+			init();
+			animate();
+
+			function init() {			
+				//Init Kinect connection, start depth
+				FusionKinect.connect("192.168.1.28");
+				FusionKinect.setDepthImageEnabled(true);
+				FusionKinect.setThresholdImageEnabled(true);
+
+				//Custom init code here...
+			}	
+
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+
+			function render() {
+				var depthImage = FusionKinect.getDepthDataAsImage();
+				var thresholdImage = FusionKinect.getThresholdDataAsImage();
+
+				document.getElementById("imageDepth").src = "data:image/png;base64," + depthImage.Frame;
+				document.getElementById("imageThreshold").src = "data:image/png;base64," + thresholdImage.Frame;
+			}
+
+      </script>
+      <div>
+	      <p>Depth Image</p>
+	      <img id="imageDepth" width="512" height="424" />
+  	  </div>
+  	  <div>
+	      <p>Threshold (Blob) Image</p>
+	      <img id="imageThreshold" width="512" height="424" />  
+	  </div>
+   </body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+   <head>	  
+   		<title>FusionKinect - Skeleton Console Example</title>
+   </head>
+   <body>      
+   	  <script src="http://code.jquery.com/jquery-2.2.3.min.js" ></script>
+   	  <script src="Kinect.js" ></script>
+      <script type="text/javascript">			
+
+			//Init view
+			init();
+
+			function init() {			
+				//Init Kinect Connection
+				FusionKinect.connect("172.20.19.253");
+				
+				//Start Skeleton Stream
+				FusionKinect.setAudioEnabled(true);
+
+				//Set Update Interval to 10fps
+				FusionKinect.setUpdateFrequency(10);
+
+				//Print skeletons once each second
+				setInterval(render,1000);
+
+				//Other init code here...
+
+			}			
+
+			function render() {				
+				var data = FusionKinect.getAudioData();
+				console.log(data);
+			}
+
+      </script>	   
+   </body>
+</html>

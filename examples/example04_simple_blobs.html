@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html>
+   <head>
+   		<title>FusionKinect - Simple Blob Example</title> 	  
+		<style>
+
+		  body {
+		  	background-color: black;
+		  }
+
+	      .blob { 
+			background-color: green;
+			border-radius: 7px;
+		  }
+
+		  .blob div {
+		  	font-size: 10px;
+			color:white;
+			font-family: Courier, Arial, "Helvetica Neue", sans-serif;
+			font-weight: 100;
+		  	margin-left:25px;
+		  	width:150px;
+		  }
+
+		</style>
+   </head>
+   <body>      
+   	  <script src="http://code.jquery.com/jquery-2.2.3.min.js" ></script>
+   	  <script src="Kinect.js" ></script>
+      <script type="text/javascript">			
+		
+			//Init view, start animation
+			init();
+			animate();
+
+			function init() {			
+				//Init Kinect connection, start depth
+				FusionKinect.connect("192.168.1.28");
+				FusionKinect.setBlobsEnabled(true);
+
+				//Event handling
+				window.addEventListener( 'resize', onWindowResize, false );
+				onWindowResize(); //initial window size
+
+				//Custom init code here...
+			}
+
+			function onWindowResize() {
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+				//Window size change
+			}			
+
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+
+			function compareArea(a,b) {
+			  if (a.Dimensions.X*a.Dimensions.Y < b.Dimensions.X*b.Dimensions.Y)
+			    return 1;
+			  if (a.Dimensions.X*a.Dimensions.Y > b.Dimensions.X*b.Dimensions.Y)
+			    return -1;
+			  return 0;
+			}
+
+			function render() {
+				var data = FusionKinect.getBlobData();
+				var counter = 0;
+
+				//Clear out blob container div
+				$("#blobs").empty();
+
+				//Data sanity check
+				if(data === undefined) return;
+
+				//Sort by Blob size (area)
+				var sortedData = data.Blobs.sort(compareArea);
+
+				//Render each blob
+				$.each(sortedData, function(key,value){
+					var topPos = value.Position.Y;
+					var leftPos = value.Position.X*2;
+					var blobwidth = value.Dimensions.X;
+					var blobheight = value.Dimensions.Y;
+					var divToAdd = $('<div></div>').addClass("blob")
+												   .css({top: topPos, left: leftPos, position:'absolute', width:blobwidth, height:blobheight});
+					$(divToAdd).append("<div>"+key
+						+"<br/>X: "+value.Position.X.toFixed(5)
+						+"<br/>Y: "+value.Position.Y.toFixed(5)
+						+"<br/>W: "+value.Dimensions.X.toFixed(5)
+						+"<br/>H: "+value.Dimensions.Y.toFixed(5)
+						+"<br/></div>");
+					$("#blobs").append(divToAdd);
+					
+					//Only display first 3 Blobs (as they are sorted, the 3 biggest Blobs are displayed)
+					counter++;
+					if(counter > 3) return false;
+				});
+			}
+
+      </script>	  
+      <div id="blobs">
+         
+      </div>  
+   </body>
+</html>

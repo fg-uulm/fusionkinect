@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+   <head>
+   		<title>FusionKinect - Simple Audio Drawing Example</title>
+		<style>
+
+		  body {
+		  	background-color: black;
+		  }
+
+	      .beam { 
+			background-color: red;
+			width:10px;
+			height:10px;
+			border-radius: 3px;
+		  }
+
+		  .beam div {
+		  	font-size: 10px;
+			color:white;
+			font-family: Courier, Arial, "Helvetica Neue", sans-serif;
+			font-weight: 100;
+		  	margin-left:15px;
+		  	width:100px;
+		  }
+
+		</style>
+   </head>
+   <body>      
+   	  <script src="http://code.jquery.com/jquery-2.2.3.min.js" ></script>  
+   	  <script src="Kinect.js" ></script>
+      <script type="text/javascript">			
+		
+			//Init view, start animation
+			init();
+			animate();
+
+			function init() {			
+				//Init Kinect connection, start audio
+				FusionKinect.connect("172.20.19.253");
+				FusionKinect.setAudioEnabled(true);
+
+				//Event handling
+				window.addEventListener( 'resize', onWindowResize, false );
+				onWindowResize(); //initial window size
+
+				//Custom init code here...
+			}
+
+			function onWindowResize() {
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+				//Window size change
+			}			
+
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+
+			function render() {
+				var data = FusionKinect.getAudioData();
+				console.log(data.Beams);
+
+				//Clear out beam display
+				$("#beams").empty();
+
+				//Render each skeleton
+				$.each(data.Beams, function(key,value){
+					//Audio Beam specifics					
+					var leftPos = windowHalfX+(windowHalfX*value.Angle);
+					var confidenceOpacity = value.Confidence;
+					var divToAdd = $('<div></div>').addClass("beam").css({top: windowHalfY, left: leftPos, position:'absolute', opacity: confidenceOpacity});
+					$(divToAdd).append("<div>"
+						+"Angle: "+value.Angle.toFixed(4)						
+						+"<br/>Confidence: "+value.Confidence.toFixed(4)+"<br/></div>");
+					$("#beams").append(divToAdd);
+				});
+			}
+
+      </script>	  
+      <div id="beams">
+         
+      </div>  
+   </body>
+</html>

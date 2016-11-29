@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html>
+   <head>
+   		<title>FusionKinect - Simple Marker Example</title> 	  
+		<style>
+
+		  body {
+		  	background-color: black;
+		  }
+
+	      .marker { 
+			background-color: blue;
+			width:15px;
+			height:15px;
+			border-radius: 7px;
+		  }
+
+		  .marker div {
+		  	font-size: 10px;
+			color:white;
+			font-family: Courier, Arial, "Helvetica Neue", sans-serif;
+			font-weight: 100;
+		  	margin-left:25px;
+		  	width:150px;
+		  }
+
+		</style>
+   </head>
+   <body>      
+   	  <script src="http://code.jquery.com/jquery-2.2.3.min.js" ></script>
+   	  <script src="Kinect.js" ></script>
+      <script type="text/javascript">			
+		
+			//Init view, start animation
+			init();
+			animate();
+
+			function init() {			
+				//Init Kinect connection, start depth
+				FusionKinect.connect("192.168.1.28");
+				FusionKinect.setMarkersEnabled(true);
+
+				//Event handling
+				window.addEventListener( 'resize', onWindowResize, false );
+				onWindowResize(); //initial window size
+
+				//Custom init code here...
+			}
+
+			function onWindowResize() {
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+				//Window size change
+			}			
+
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+
+			function render() {
+				var data = FusionKinect.getMarkerData();
+
+				//Clear out marker container div
+				$("#markers").empty();
+
+				//Data sanity check
+				if(data === undefined) return;
+
+				//Render each marker
+				$.each(data.Markers, function(key,value){					
+					var topPos = (value.Position.Y*-1*(windowHalfY/2*value.Position.Z)+windowHalfY);
+					var leftPos = value.Position.X*(windowHalfY/2*value.Position.Z)+windowHalfX;
+					var divToAdd = $('<div></div>').addClass("marker").css({top: topPos, left: leftPos, position:'absolute'});
+					$(divToAdd).append("<div>"+key
+						+"<br/>X: "+value.Position.X.toFixed(5)
+						+"<br/>Y: "+value.Position.Y.toFixed(5)
+						+"<br/>Z: "+value.Position.Z.toFixed(5)+"<br/></div>");
+					$("#markers").append(divToAdd);
+				});
+			}
+
+      </script>	  
+      <div id="markers">
+         
+      </div>  
+   </body>
+</html>
