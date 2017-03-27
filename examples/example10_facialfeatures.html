@@ -16,7 +16,7 @@
 				FusionKinect.connect("127.0.0.1");
 				
 				//Start Skeleton Stream
-				FusionKinect.setSkeletonsEnabled(true);
+				FusionKinect.setFaceEnabled(true);
 
 				//Set Update Interval to 10fps
 				FusionKinect.setUpdateFrequency(10);
@@ -29,8 +29,8 @@
 			}			
 
 			function render() {				
-				var data = FusionKinect.getSkeletonData();
-				console.log(data.Skeletons);
+				var data = FusionKinect.getFaceData();
+				console.log(data);
 			}
 
       </script>	   

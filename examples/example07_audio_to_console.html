@@ -5,7 +5,7 @@
    </head>
    <body>      
    	  <script src="http://code.jquery.com/jquery-2.2.3.min.js" ></script>
-   	  <script src="Kinect.js" ></script>
+   	  <script src="../lib/Kinect.js" ></script>
       <script type="text/javascript">			
 
 			//Init view
@@ -13,7 +13,7 @@
 
 			function init() {			
 				//Init Kinect Connection
-				FusionKinect.connect("172.20.19.253");
+				FusionKinect.connect("127.0.0.1");
 				
 				//Start Skeleton Stream
 				FusionKinect.setAudioEnabled(true);

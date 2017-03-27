@@ -11,6 +11,7 @@
 	      .blob { 
 			background-color: green;
 			border-radius: 7px;
+			border: 1px solid white;
 		  }
 
 		  .blob div {
@@ -26,7 +27,7 @@
    </head>
    <body>      
    	  <script src="http://code.jquery.com/jquery-2.2.3.min.js" ></script>
-   	  <script src="Kinect.js" ></script>
+   	  <script src="../lib/Kinect.js" ></script>
       <script type="text/javascript">			
 		
 			//Init view, start animation
@@ -35,7 +36,7 @@
 
 			function init() {			
 				//Init Kinect connection, start depth
-				FusionKinect.connect("192.168.1.28");
+				FusionKinect.connect("127.0.0.1");
 				FusionKinect.setBlobsEnabled(true);
 
 				//Event handling

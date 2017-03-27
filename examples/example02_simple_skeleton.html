@@ -28,7 +28,7 @@
    </head>
    <body>      
    	  <script src="http://code.jquery.com/jquery-2.2.3.min.js" ></script>  
-   	  <script src="Kinect.js" ></script>
+   	  <script src="../lib/Kinect.js" ></script>
       <script type="text/javascript">			
 		
 			//Init view, start animation
@@ -37,7 +37,7 @@
 
 			function init() {			
 				//Init Kinect connection, start depth
-				FusionKinect.connect("192.168.1.28");
+				FusionKinect.connect("127.0.0.1");
 				FusionKinect.setSkeletonsEnabled(true);
 
 				//Event handling
@@ -64,12 +64,15 @@
 				//Clear out skeletons
 				$("#skeletons").empty();
 
+				//Data sanity check
+				if(data === undefined) return;
+
 				//Render each skeleton
 				$.each(data.Skeletons, function(key,value){
 					//skeleton joints
 					$.each(value.absoluteRawSkeleton, function(key2,value2) {
-						var topPos = (value2.position.Y*-1*(windowHalfY/2*value2.position.Z)+windowHalfY);
-						var leftPos = value2.position.X*(windowHalfY/2*value2.position.Z)+windowHalfX;
+						var topPos = (value2.position.Y*-1*(windowHalfY/2*(1/value2.position.Z))+windowHalfY);
+						var leftPos = value2.position.X*(windowHalfY/2*(1/value2.position.Z))+windowHalfX;
 						var divToAdd = $('<div></div>').addClass("joint").css({top: topPos, left: leftPos, position:'absolute'});
 						$(divToAdd).append("<div>"+key2
 							+"<br/>X: "+value2.position.X.toFixed(2)
